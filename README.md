@@ -1,8 +1,6 @@
-Here’s the complete `README.md` in markdown format for your repository `docsify-on-aws`:
 
----
 
-```markdown
+
 # 📘 docsify-on-aws
 
 This project demonstrates how to deploy a static website powered by [Docsify](https://docsify.js.org/) to AWS using [Pulumi YAML](https://www.pulumi.com/docs/using-pulumi/yaml/). It sets up an S3 bucket to host the site, configures it for static hosting, and optionally sets up a CloudFront CDN for global delivery.
