@@ -1,0 +1,5 @@
+config:
+  aws:region: us-west-2
+  docsify-on-aws:path: ./www
+  docsify-on-aws:indexDocument: index.html
+  docsify-on-aws:errorDocument: 404.html
