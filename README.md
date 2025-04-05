@@ -80,20 +80,76 @@ pulumi config set aws:region us-west-2
 Place your `index.html` and `404.html` files inside the `www/` directory. You can start with a basic [Docsify site](https://docsify.js.org/#/quickstart) or use this example:
 
 ```html
-<!-- www/index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Docs Site</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/themes/vue.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🚀 My Awesome Docs</title>
+  <meta name="description" content="Documentation made simple with Docsify + Pulumi + AWS" />
+  <link rel="icon" href="https://emojicdn.elk.sh/📘" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Fira Sans', sans-serif;
+      background: linear-gradient(145deg, #eef2f3, #8e9eab);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    #app {
+      max-width: 800px;
+      margin: auto;
+      padding: 2rem;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 1rem;
+      margin-top: 4rem;
+    }
+
+    .branding {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .branding h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .branding p {
+      font-size: 1.1rem;
+      color: #555;
+    }
+  </style>
+
+  <!-- Docsify Script -->
+  <script>
+    window.$docsify = {
+      name: '🚀 My Docs',
+      repo: '',
+      loadSidebar: true,
+      subMaxLevel: 2,
+      themeColor: '#2c3e50'
+    };
+  </script>
+  <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
 </head>
 <body>
-  <div id="app">Loading Docs...</div>
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <div class="branding">
+    <h1>📘 My Awesome Docs</h1>
+    <p>Your guide to mastering Pulumi + AWS + Docsify</p>
+  </div>
+
+  <div id="app">Loading docs…</div>
 </body>
 </html>
+
 ```
 
 ---
