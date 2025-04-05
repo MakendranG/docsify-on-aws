@@ -32,11 +32,11 @@ Before you begin, ensure you have the following:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/docsify-on-aws.git
+git clone https://github.com/MakendranG/docsify-on-aws.git
 cd docsify-on-aws
 ```
 
-> Replace `your-username` with your GitHub username if you fork it.
+
 
 ---
 
