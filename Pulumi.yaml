@@ -1,0 +1,119 @@
+name: docsify-on-aws
+description: A Pulumi YAML program to deploy a Docsify static website on AWS
+runtime: yaml
+
+config:
+  path:
+    type: string
+    default: ./www
+  indexDocument:
+    type: string
+    default: index.html
+  errorDocument:
+    type: string
+    default: 404.html
+  pulumi:tags:
+    value:
+      pulumi:template: static-website-aws-yaml
+
+resources:
+  bucket:
+    type: aws:s3:BucketV2
+
+  bucketWebsite:
+    type: aws:s3:BucketWebsiteConfigurationV2
+    properties:
+      bucket: ${bucket.bucket}
+      indexDocument:
+        suffix: ${indexDocument}
+      errorDocument:
+        key: ${errorDocument}
+
+  ownership-controls:
+    type: aws:s3:BucketOwnershipControls
+    properties:
+      bucket: ${bucket.id}
+      rule:
+        objectOwnership: ObjectWriter
+
+  public-access-block:
+    type: aws:s3:BucketPublicAccessBlock
+    properties:
+      bucket: ${bucket.id}
+      blockPublicAcls: false
+      blockPublicPolicy: false
+      ignorePublicAcls: false
+      restrictPublicBuckets: false
+
+  bucketPolicy:
+    type: aws:s3:BucketPolicy
+    properties:
+      bucket: ${bucket.id}
+      policy:
+        fn::toJSON:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Principal: "*"
+              Action: "s3:GetObject"
+              Resource: "arn:aws:s3:::${bucket.bucket}/*"
+
+  bucket-folder:
+    type: synced-folder:index:S3BucketFolder
+    properties:
+      path: ${path}
+      bucketName: ${bucket.bucket}
+      acl: public-read
+    options:
+      dependsOn:
+        - ${ownership-controls}
+        - ${public-access-block}
+
+  cdn:
+    type: aws:cloudfront:Distribution
+    properties:
+      enabled: true
+      origins:
+        - originId: ${bucket.arn}
+          domainName: ${bucketWebsite.websiteEndpoint}
+          customOriginConfig:
+            originProtocolPolicy: http-only
+            httpPort: 80
+            httpsPort: 443
+            originSslProtocols:
+              - TLSv1.2
+      defaultCacheBehavior:
+        targetOriginId: ${bucket.arn}
+        viewerProtocolPolicy: redirect-to-https
+        allowedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+        cachedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+        compress: true
+        defaultTtl: 600
+        maxTtl: 600
+        minTtl: 600
+        forwardedValues:
+          queryString: true
+          cookies:
+            forward: all
+      priceClass: PriceClass_100
+      customErrorResponses:
+        - errorCode: 404
+          responseCode: 404
+          responsePagePath: /${errorDocument}
+      restrictions:
+        geoRestriction:
+          restrictionType: none
+      viewerCertificate:
+        cloudfrontDefaultCertificate: true
+
+outputs:
+  originURL: http://${bucketWebsite.websiteEndpoint}
+  originHostname: ${bucketWebsite.websiteEndpoint}
+  cdnURL: https://${cdn.domainName}
+  cdnHostname: ${cdn.domainName}
