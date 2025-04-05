@@ -1,6 +1,3 @@
-
-
-
 # 📘 docsify-on-aws
 
 This project demonstrates how to deploy a static website powered by [Docsify](https://docsify.js.org/) to AWS using [Pulumi YAML](https://www.pulumi.com/docs/using-pulumi/yaml/). It sets up an S3 bucket to host the site, configures it for static hosting, and optionally sets up a CloudFront CDN for global delivery.
@@ -35,8 +32,6 @@ Before you begin, ensure you have the following:
 git clone https://github.com/MakendranG/docsify-on-aws.git
 cd docsify-on-aws
 ```
-
-
 
 ---
 
@@ -75,6 +70,24 @@ pulumi config set aws:region us-west-2
 
 ---
 
+### ⚠️ Important Note About AWS S3 Permissions
+
+If you receive a `403 AccessDenied` error during the first Pulumi deployment like:
+
+```
+error: api error AccessDenied: User is not authorized to perform: s3:PutBucketPolicy...
+```
+
+You need to disable **Block Public Access** settings:
+
+1. Go to AWS Console → S3 → Block Public Access
+2. Disable **"Block all public access"** either at the **account level** or for the created bucket after the initial run
+3. Re-run `pulumi up`
+
+This is required because AWS blocks any public bucket policy by default.
+
+---
+
 ### 6. Define Your Website Content
 
 Place your `index.html` and `404.html` files inside the `www/` directory. You can start with a basic [Docsify site](https://docsify.js.org/#/quickstart) or use this example:
@@ -88,10 +101,7 @@ Place your `index.html` and `404.html` files inside the `www/` directory. You ca
   <title>🚀 My Awesome Docs</title>
   <meta name="description" content="Documentation made simple with Docsify + Pulumi + AWS" />
   <link rel="icon" href="https://emojicdn.elk.sh/📘" />
-
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;600&display=swap" rel="stylesheet" />
-
   <style>
     body {
       font-family: 'Fira Sans', sans-serif;
@@ -100,7 +110,6 @@ Place your `index.html` and `404.html` files inside the `www/` directory. You ca
       padding: 0;
       color: #333;
     }
-
     #app {
       max-width: 800px;
       margin: auto;
@@ -110,25 +119,20 @@ Place your `index.html` and `404.html` files inside the `www/` directory. You ca
       border-radius: 1rem;
       margin-top: 4rem;
     }
-
     .branding {
       text-align: center;
       margin-bottom: 2rem;
     }
-
     .branding h1 {
       font-size: 2.5rem;
       margin: 0;
       color: #2c3e50;
     }
-
     .branding p {
       font-size: 1.1rem;
       color: #555;
     }
   </style>
-
-  <!-- Docsify Script -->
   <script>
     window.$docsify = {
       name: '🚀 My Docs',
@@ -145,11 +149,9 @@ Place your `index.html` and `404.html` files inside the `www/` directory. You ca
     <h1>📘 My Awesome Docs</h1>
     <p>Your guide to mastering Pulumi + AWS + Docsify</p>
   </div>
-
   <div id="app">Loading docs…</div>
 </body>
 </html>
-
 ```
 
 ---
@@ -223,10 +225,5 @@ If you see a 404 page from CloudFront:
 
 ---
 
-📬 Questions? Feel free to open an [issue](https://github.com/your-username/docsify-on-aws/issues)!
+📬 Questions? Feel free to open an [issue](https://github.com/MakendranG/docsify-on-aws/issues)!
 
-```
-
----
-
-Let me know if you want this pushed to a GitHub repo with action workflows, custom domains, or HTTPS settings!
