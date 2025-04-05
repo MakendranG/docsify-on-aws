@@ -1,5 +1,5 @@
 name: docsify-on-aws
-description: A Pulumi YAML program to deploy a static website on AWS
+description: A Pulumi YAML program to deploy a Docsify static website on AWS
 runtime: yaml
 
 config:
@@ -47,31 +47,27 @@ resources:
 
   bucketPolicy:
     type: aws:s3:BucketPolicy
-    options:
-      dependsOn:
-        - ${public-access-block}
     properties:
-      bucket: ${bucket.bucket}
+      bucket: ${bucket.id}
       policy:
         fn::toJSON:
           Version: "2012-10-17"
           Statement:
             - Effect: "Allow"
               Principal: "*"
-              Action:
-                - "s3:GetObject"
+              Action: "s3:GetObject"
               Resource: "arn:aws:s3:::${bucket.bucket}/*"
 
   bucket-folder:
     type: synced-folder:index:S3BucketFolder
+    properties:
+      path: ${path}
+      bucketName: ${bucket.bucket}
+      acl: public-read
     options:
       dependsOn:
         - ${ownership-controls}
         - ${public-access-block}
-    properties:
-      acl: public-read
-      bucketName: ${bucket.bucket}
-      path: ${path}
 
   cdn:
     type: aws:cloudfront:Distribution
@@ -102,4 +98,22 @@ resources:
         maxTtl: 600
         minTtl: 600
         forwardedValues:
-          query
+          queryString: true
+          cookies:
+            forward: all
+      priceClass: PriceClass_100
+      customErrorResponses:
+        - errorCode: 404
+          responseCode: 404
+          responsePagePath: /${errorDocument}
+      restrictions:
+        geoRestriction:
+          restrictionType: none
+      viewerCertificate:
+        cloudfrontDefaultCertificate: true
+
+outputs:
+  originURL: http://${bucketWebsite.websiteEndpoint}
+  originHostname: ${bucketWebsite.websiteEndpoint}
+  cdnURL: https://${cdn.domainName}
+  cdnHostname: ${cdn.domainName}
